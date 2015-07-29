@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
+from sklearn import cross_validation
 
 class DigitRecognizer():
     def __init__(self):
@@ -17,6 +18,12 @@ class DigitRecognizer():
         self.training_labels = self.training.ix[:, 0]
         self.testing_datas = self.testing.ix[:, 0:]
         self.testing_labels = None
+
+    def cross_validation(self):
+        self.model = RandomForestClassifier()
+        scores = cross_validation.cross_val_score(
+            self.model, self.training_datas, self.training_labels, cv = 50)
+        print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
     def learning(self):
         # 学習
@@ -39,6 +46,7 @@ def main():
     dr = DigitRecognizer()
     dr.reading()
     dr.preprocessing()
+    dr.cross_validation()
     dr.learning()
     dr.predicting()
     dr.writing()
