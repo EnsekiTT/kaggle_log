@@ -2,6 +2,8 @@
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn import cross_validation
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.svm import LinearSVC
 
 class DigitRecognizer():
     def __init__(self):
@@ -19,15 +21,19 @@ class DigitRecognizer():
         self.testing_datas = self.testing.ix[:, 0:]
         self.testing_labels = None
 
+    def model_tuning(self):
+        # RandomForestClassifier
+        #self.model = RandomForestClassifier()
+        # SupportVectorMachine
+        self.model = OneVsRestClassifier(LinearSVC(random_state=0))
+
     def cross_validation(self):
-        self.model = RandomForestClassifier()
         scores = cross_validation.cross_val_score(
             self.model, self.training_datas, self.training_labels, cv = 50)
         print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
     def learning(self):
         # 学習
-        self.model = RandomForestClassifier()
         self.model.fit(self.training_datas, self.training_labels)
 
     def predicting(self):
@@ -46,6 +52,7 @@ def main():
     dr = DigitRecognizer()
     dr.reading()
     dr.preprocessing()
+    dr.model_tuning()
     dr.cross_validation()
     dr.learning()
     dr.predicting()
