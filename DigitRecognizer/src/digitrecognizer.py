@@ -48,8 +48,10 @@ class DigitRecognizer():
 
         self.model.add(Convolution2D(32, 1, 3, 3, border_mode='full'))
         self.model.add(Activation('relu'))
+
         self.model.add(Convolution2D(32, 32, 3, 3))
         self.model.add(Activation('relu'))
+
         self.model.add(MaxPooling2D(poolsize=(2, 2)))
         self.model.add(Dropout(0.25))
 
@@ -58,13 +60,16 @@ class DigitRecognizer():
         self.model.add(Activation('relu'))
         self.model.add(Dropout(0.5))
 
-        self.model.add(Dense(128, 32))
+        self.model.add(Dense(128, 64))
+        self.model.add(Activation('sigmoid'))
+
+        self.model.add(Dense(64, 32))
         self.model.add(Activation('relu'))
 
         self.model.add(Dense(32, self.nb_classes))
         self.model.add(Activation('softmax'))
 
-        self.model.compile(loss='categorical_crossentropy', optimizer='adadelta')
+        self.model.compile(loss='categorical_crossentropy', optimizer='adam')
 
     def cross_validation(self):
         scores = cross_validation.cross_val_score(
@@ -78,7 +83,7 @@ class DigitRecognizer():
 
         # DeepLearning
         self.model.fit(self.training_datas, self.training_labels, show_accuracy=True,
-            verbose=1, nb_epoch=12, batch_size=64, validation_split=0.15)
+            verbose=1, nb_epoch=30, batch_size=128, validation_split=0.15)
 
     def predicting(self):
         # 評価
